@@ -4,9 +4,39 @@ from ansible.parsing.dataloader import DataLoader
 from ansible.vars.manager import VariableManager
 from ansible.inventory.manager import InventoryManager
 from ansible.executor.playbook_executor import PlaybookExecutor
+from ansible.plugins.callback import CallbackBase
+import json
+from ansible import constants as C
+from ansible.utils.color import colorize, hostcolor
 
 
-def ansible_playbook(playbook):
+class bcolors:
+    HEADER = '\033[95m'     #pink
+    OKBLUE = '\033[94m'     #blue
+    OKGREEN = '\033[92m'    #green
+    WARNING = '\033[93m'    #yellow
+    FAIL = '\033[91m'       #red
+    WHITE = '\033[37m'      #white
+    ENDC = '\033[0m'	    #end colors
+    
+
+
+class ResultCallback(CallbackBase):
+    def v2_runner_on_ok(self, result, **kwargs):
+        host = result._host
+	re = result._result
+        #print(json.dumps({host.name: result._result}, indent=4))
+	print "hostname:%s--->excuted command: %s--->start time:%s--->stdout content:" %(host,re['cmd'],re['start'])
+    	print bcolors.OKGREEN + re['stdout'] + bcolors.ENDC
+    def v2_runner_on_failed(self,result,**kwargs):
+        host = result._host
+	re = result._result
+        #print(json.dumps({host.name: result._result}, indent=4))
+	#print("-----------IP:%s------------" %host.name)
+	#print("-----------error_output:%s------------" %result._result['stderr_lines'])
+	#print("-----------start_time:%s------------" %result._result['start'])
+	#print("-----------end_time:%s------total spend time:%s------" %(result._result['end'],result._result['delta']))
+def ansible_playbook(pbpath,password):
 
     Options = namedtuple('Options',
                          ['listtags', 'listtasks', 'listhosts', 'syntax', 'connection', 'module_path', 'forks',
@@ -17,12 +47,14 @@ def ansible_playbook(playbook):
                       module_path=None, forks=100, remote_user='root', private_key_file=None,
                       ssh_common_args=None, ssh_extra_args=None, sftp_extra_args=None, scp_extra_args=None, become=True,
                       become_method=None, become_user='root', verbosity=None, check=False, diff=False)
-    passwords = dict(conn_pass='654321')
+    passwords = dict(conn_pass=password)
     inventory = InventoryManager(loader=loader, sources=['/etc/ansible/hosts'])
     variable_manager = VariableManager(loader=loader, inventory=inventory)
-    playbook = PlaybookExecutor(playbooks=[playbook], inventory=inventory, variable_manager=variable_manager, loader=loader,
+    playbook = PlaybookExecutor(playbooks=[pbpath], inventory=inventory, variable_manager=variable_manager, loader=loader,
                             options=options, passwords=passwords)
+    callback = ResultCallback()
+    playbook._tqm._stdout_callback = callback
     playbook.run()
 
 if __name__=="__main__":
-    ansible_playbook('/home/sw/github/ansible2.4/test.yml')
+    ansible_playbook(pbpath='/home/sw/github/ansible2.4/test.yml',password='654321')
