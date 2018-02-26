@@ -4,4 +4,4 @@
   gather_facts: no
   tasks:
      - name: "playbook"
-       shell: mkdir -p /tmp/test/dir
+       shell: ls /var/log/
