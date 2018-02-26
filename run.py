@@ -26,7 +26,7 @@ class ResultCallback(CallbackBase):
     def v2_runner_on_ok(self, result, **kwargs):
         host = result._host
 	re = result._result
-        print(json.dumps({host.name: result._result}, indent=4))
+        #print(json.dumps({host.name: result._result}, indent=4))
 	print "hostname:%s--->excuted command: %s--->start time:%s--->stdout content:" %(host,re['cmd'],re['start'])
     	print bcolors.OKGREEN + re['stdout'] + bcolors.ENDC
 
