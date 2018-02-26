@@ -22,20 +22,20 @@ class bcolors:
 
 
 class ResultCallback(CallbackBase):
+	#override CallbackBase
     def v2_runner_on_ok(self, result, **kwargs):
         host = result._host
 	re = result._result
-        #print(json.dumps({host.name: result._result}, indent=4))
+        print(json.dumps({host.name: result._result}, indent=4))
 	print "hostname:%s--->excuted command: %s--->start time:%s--->stdout content:" %(host,re['cmd'],re['start'])
     	print bcolors.OKGREEN + re['stdout'] + bcolors.ENDC
+
     def v2_runner_on_failed(self,result,**kwargs):
         host = result._host
 	re = result._result
-        #print(json.dumps({host.name: result._result}, indent=4))
-	#print("-----------IP:%s------------" %host.name)
-	#print("-----------error_output:%s------------" %result._result['stderr_lines'])
-	#print("-----------start_time:%s------------" %result._result['start'])
-	#print("-----------end_time:%s------total spend time:%s------" %(result._result['end'],result._result['delta']))
+	print "hostname:%s--->excuted command: %s--->start time:%s--->stdout content:" %(host,re['cmd'],re['start'])
+    	print bcolors.FAIL + re['stderr'] + bcolors.ENDC
+
 def ansible_playbook(pbpath,password):
 
     Options = namedtuple('Options',
