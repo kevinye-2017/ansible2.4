@@ -6,8 +6,6 @@ from ansible.inventory.manager import InventoryManager
 from ansible.executor.playbook_executor import PlaybookExecutor
 from ansible.plugins.callback import CallbackBase
 import json
-from ansible import constants as C
-from ansible.utils.color import colorize, hostcolor
 
 
 class bcolors:
