@@ -1,0 +1,10 @@
+---
+- hosts: test
+  remote_user: root
+  gather_facts: no
+  tasks:
+     - name: "print response msg"
+       shell: cat /etc/hosts
+       register: result
+     - name: show debug info
+       debug: var=result.stdout verbosity=0
