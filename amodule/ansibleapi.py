@@ -7,7 +7,7 @@ from ansible.executor.playbook_executor import PlaybookExecutor
 from ansible.plugins.callback import CallbackBase
 import json
 
-
+'''
 class bcolors:
     HEADER = '\033[95m'     #pink
     OKBLUE = '\033[94m'     #blue
@@ -22,16 +22,7 @@ class ResultCallback(CallbackBase):
     def v2_runner_on_ok(self, result, **kwargs):
         host = result._host
 	re = result._result
-        #print(json.dumps({host.name: result._result}, indent=4))
-	print "hostname:%s--->excuted command: %s--->start time:%s--->stdout content:" %(host,re['cmd'],re['start'])
-    	print bcolors.OKGREEN + re['stdout'] + bcolors.ENDC
-
-    def v2_runner_on_failed(self,result,**kwargs):
-        host = result._host
-	re = result._result
-	print "hostname:%s--->excuted command: %s--->start time:%s--->stdout content:" %(host,re['cmd'],re['start'])
-    	print bcolors.FAIL + re['stderr'] + bcolors.ENDC
-
+'''
 def ansible_playbook(*args,**kwargs):
     pbpath = kwargs['pbpath']
     password = kwargs['password']    
@@ -49,8 +40,8 @@ def ansible_playbook(*args,**kwargs):
     variable_manager = VariableManager(loader=loader, inventory=inventory)
     playbook = PlaybookExecutor(playbooks=[pbpath], inventory=inventory, variable_manager=variable_manager, loader=loader,
                             options=options, passwords=passwords)
-    callback = ResultCallback()
-    playbook._tqm._stdout_callback = callback
+    #callback = ResultCallback()
+    #playbook._tqm._stdout_callback = callback
     playbook.run()
 
 if __name__=="__main__":
