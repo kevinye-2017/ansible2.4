@@ -1,58 +1,19 @@
 #!/usr/bin/env python
-from collections import namedtuple
-from ansible.parsing.dataloader import DataLoader
-from ansible.vars.manager import VariableManager
-from ansible.inventory.manager import InventoryManager
-from ansible.executor.playbook_executor import PlaybookExecutor
-from ansible.plugins.callback import CallbackBase
-import json
+
+from amodule.ansibleapi import ansible_playbook
+from optparse import OptionParser
+
+parser = OptionParser(usage="usage: %prog [options] -f arg1 -p arg2")
+parser.add_option("-f","--playbook-to-path",
+                  action="store",type="string",dest="filename")
+parser.add_option("-p","--password",
+                  action="store",type="string",dest="password")
 
 
-class bcolors:
-    HEADER = '\033[95m'     #pink
-    OKBLUE = '\033[94m'     #blue
-    OKGREEN = '\033[92m'    #green
-    WARNING = '\033[93m'    #yellow
-    FAIL = '\033[91m'       #red
-    WHITE = '\033[37m'      #white
-    ENDC = '\033[0m'	    #end colors
-    
+(opts, args)= parser.parse_args()
+if (opts.filename==None or opts.password==None) and args==[]:
+    print "see <script.py> -h  for more info....."
+else:
+    ansible_playbook(pbpath=opts.filename,password=opts.password)
 
 
-class ResultCallback(CallbackBase):
-	#override CallbackBase
-    def v2_runner_on_ok(self, result, **kwargs):
-        host = result._host
-	re = result._result
-        #print(json.dumps({host.name: result._result}, indent=4))
-	print "hostname:%s--->excuted command: %s--->start time:%s--->stdout content:" %(host,re['cmd'],re['start'])
-    	print bcolors.OKGREEN + re['stdout'] + bcolors.ENDC
-
-    def v2_runner_on_failed(self,result,**kwargs):
-        host = result._host
-	re = result._result
-	print "hostname:%s--->excuted command: %s--->start time:%s--->stdout content:" %(host,re['cmd'],re['start'])
-    	print bcolors.FAIL + re['stderr'] + bcolors.ENDC
-
-def ansible_playbook(pbpath,password):
-
-    Options = namedtuple('Options',
-                         ['listtags', 'listtasks', 'listhosts', 'syntax', 'connection', 'module_path', 'forks',
-                          'remote_user', 'private_key_file', 'ssh_common_args', 'ssh_extra_args', 'sftp_extra_args',
-                          'scp_extra_args', 'become', 'become_method', 'become_user', 'verbosity', 'check', 'diff'])
-    loader = DataLoader()
-    options = Options(listtags=False, listtasks=False, listhosts=False, syntax=False, connection='ssh',
-                      module_path=None, forks=100, remote_user='root', private_key_file=None,
-                      ssh_common_args=None, ssh_extra_args=None, sftp_extra_args=None, scp_extra_args=None, become=True,
-                      become_method=None, become_user='root', verbosity=None, check=False, diff=False)
-    passwords = dict(conn_pass=password)
-    inventory = InventoryManager(loader=loader, sources=['/etc/ansible/hosts'])
-    variable_manager = VariableManager(loader=loader, inventory=inventory)
-    playbook = PlaybookExecutor(playbooks=[pbpath], inventory=inventory, variable_manager=variable_manager, loader=loader,
-                            options=options, passwords=passwords)
-    callback = ResultCallback()
-    playbook._tqm._stdout_callback = callback
-    playbook.run()
-
-if __name__=="__main__":
-    ansible_playbook(pbpath='/home/sw/github/ansible2.4/test.yml',password='654321')
