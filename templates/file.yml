@@ -1,0 +1,13 @@
+---
+- hosts: test
+  gather_facts: no
+  remote_user: root
+  tasks:
+     - name: "file moduels operations"
+       file:
+         path: /home/nsibl123eapi/opdxx
+         state: directory
+         mode: 0755
+       register: result
+     - name: show debug info
+       debug: var=result verbosity=0
