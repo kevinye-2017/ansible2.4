@@ -11,7 +11,7 @@
   with_items:
     - {src: "zabbix_agentd",dest: "/etc/init.d/"}  
     - {src: "zabbix",dest: "/usr/local/"}  
-- shell: chmod +x /etc/init.d/zabbix*
+- shell: chmod +x /etc/init.d/zabbix* && chmod +x  /usr/local/zabbix/sbin/*
   notify: restart zabbix_agentd
     
 - name: "add boot option"
