@@ -1,5 +1,7 @@
 - name: "create user"
   user: name=testzabbix createhome=no  password=no
+- lineinfile: dest=/etc/selinux/config regexp='^SELINUX=' line='SELINUX=disabled'
+- shell: setenforce 0
 - name: "install zabbix agentd"
   copy:
     src: "{{ item.src }}"
@@ -9,6 +11,7 @@
   with_items:
     - {src: "zabbix_agentd",dest: "/etc/init.d/"}  
     - {src: "zabbix",dest: "/usr/local/"}  
+- shell: chmod +x /etc/init.d/zabbix*
   notify: restart zabbix_agentd
     
 - name: "add boot option"
