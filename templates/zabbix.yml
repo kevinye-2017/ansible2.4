@@ -1,0 +1,4 @@
+- hosts: 192.168.40.162
+  gather_facts: no
+  roles:
+  - zabbix_agentd

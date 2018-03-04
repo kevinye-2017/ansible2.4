@@ -1,0 +1,18 @@
+- name: "create user"
+  user: name=testzabbix createhome=no  password=no
+- name: "install zabbix agentd"
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: testzabbix
+    group: testzabbix
+  with_items:
+    - {src: "zabbix_agentd",dest: "/etc/init.d/"}  
+    - {src: "zabbix",dest: "/usr/local/"}  
+  notify: restart zabbix_agentd
+    
+- name: "add boot option"
+  shell: chkconfig zabbix_agentd on
+- name: "start zabbix_agentd"
+  service: name=zabbix_agentd enabled=yes state=started
+   
