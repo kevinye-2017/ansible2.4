@@ -1,7 +1,0 @@
----
-- hosts: two
-  remote_user: root
-  gather_facts: no
-  tasks:
-     - name: "playbook"
-       shell: ls /var/log/
